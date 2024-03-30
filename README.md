@@ -1,6 +1,6 @@
 # Pico CLI/Shell
 
-Pico CLI/Shell is a size-optimized, minimalistic command-line interface (CLI) and shell designed for embedded systems. It uses less than 500 bytes of code and less than 100 bytes of RAM.
+Pico CLI/Shell is a size-optimized, minimalistic command-line interface (CLI) and shell designed for embedded systems. **It uses less than 500 bytes of code and less than 100 bytes of RAM.**
 
 ## Key Features 
 
