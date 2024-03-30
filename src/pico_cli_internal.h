@@ -22,7 +22,7 @@ struct pico_cli {
 
 	char *prompt;
         size_t input_buff_index;
-        char input_buff[CLI_COMMAND_BUFF_SIZE];
+        char input_buff[PICO_CLI_COMMAND_BUFF_SIZE];
 };
 
 #ifdef UNIT_TESTS

@@ -20,7 +20,7 @@ PROJECT_BASE_DIR = .
 
 
 FILES_TO_TEST_SRC= \
-	$(SRC_DIR)/pico_cli.c \
+	$(SRC_DIR)/pico_  cli.c \
 
 
 TESTS_SRC= Test_$(TARGET).c

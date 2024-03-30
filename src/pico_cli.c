@@ -18,6 +18,8 @@
 #define STATIC static
 #endif
 
+struct pico_cli cli_tmp;
+
 STATIC void echo_string(struct pico_cli *cli, const char *s)
 {
         for (uint32_t i = 0; s[i] != '\0'; i++)
@@ -85,7 +87,8 @@ STATIC char *pico_cli_handle_input(struct pico_cli *cli, char c)
         {
                 //drop character
         }
-        else if ((cli->input_buff_index + 1) < CLI_COMMAND_BUFF_SIZE)
+        else if ((cli->input_buff_index + 1) 
+		 < PICO_CLI_COMMAND_BUFF_SIZE)
         {
                 cli->input_buff[cli->input_buff_index] = c;
                 cli->input_buff_index += 1;
@@ -175,6 +178,42 @@ char *pico_cli_get_user_input(struct pico_cli *cli)
 	return NULL;
 }
 
+
+static void pico_cli_init_internal(struct pico_cli *cli, 
+			    struct pico_cli_settings *s)
+{
+
+	cli->get_char = s->get_char;
+	cli->send_char = s->send_char;
+	cli->input_buff_index = 0;
+
+	cli->cmd_list.next = NULL;
+	cli->cmd_list.command_name = "help";
+	cli->cmd_list.command_description = 
+		"print out all the commands";
+	cli->cmd_list.command_function = help_function;
+
+	cli->input_end_char = s->input_end_char;
+	cli->prompt = s->prompt;
+}
+
+#ifdef PICO_CLI_USE_STATIC_MEMORY_ALLOCATION
+uint32_t pico_cli_init(struct pico_cli *cli, 
+		       struct pico_cli_settings *s)
+{
+	if (NULL == cli
+	    || NULL == s->my_malloc
+	    || NULL == s->get_char
+	    || NULL == s->send_char)
+	{
+		return 1;
+	}
+	
+	pico_cli_init_internal(cli, s);
+	return 0;
+}
+
+#else
 struct pico_cli *pico_cli_init(struct pico_cli_settings *s)
 {
 	if (NULL == s->my_malloc
@@ -190,20 +229,8 @@ struct pico_cli *pico_cli_init(struct pico_cli_settings *s)
 		return tmp;
 	}
 
-
-	tmp->get_char = s->get_char;
-	tmp->send_char = s->send_char;
-	tmp->input_buff_index = 0;
-
-	tmp->cmd_list.next = NULL;
-	tmp->cmd_list.command_name = "help";
-	tmp->cmd_list.command_description = 
-		"print out all the commands";
-	tmp->cmd_list.command_function = help_function;
-
-	tmp->input_end_char = s->input_end_char;
-	tmp->prompt = s->prompt;
+	pico_cli_init_internal(tmp, s);
 
 	return tmp;
 }
-
+#endif
