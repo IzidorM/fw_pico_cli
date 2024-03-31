@@ -113,29 +113,53 @@ static struct pico_cli_cmd reboot = {
     .command_function = reboot_cli,
 };
 
-static void test_user_input_cli(struct pico_cli *cli, char *s)
+static void quiz_cli(struct pico_cli *cli, char *s)
 {
-    (void)cli;
-    (void)s;
+        (void) cli;
+        (void) s;
 
-    dmsg("Waiting for user input: ");
-    char *input = pico_cli_get_user_input(cli);
-    dmsg("User input is: %s\n", input);
+	char *quiz[3][2] = {
+	{"What is the capital of France?", "Paris"},
+	{"What is the largest planet in our solar system?","Jupiter"},
+	{"What is the chemical symbol for water?","H2O"}
+	};
+
+	dmsg("Start of a smal quiz\n");		
+	uint32_t i = 0;
+	for (i = 0; 3 > i; i++)
+	{
+		dmsg("Question: %s\n", quiz[i][0]);
+		dmsg("Input an answer: ");
+		char *input = pico_cli_get_user_input(cli);
+		if (0 == strcmp(quiz[i][1], input))
+		{
+			dmsg("Correct\n");
+		}
+		else
+		{
+			dmsg("Wrong, sorry try again :(\n");
+			break;
+		}
+	}
+
+	dmsg("You manage to answer %i questions right\n", i);
 }
 
-static struct pico_cli_cmd tui = {
-    .next = NULL,
-    .c
-    ommand_name = "tui",
-    .command_description = "Test user interactive input\n",
-    .command_function = test_user_input_cli,
+static struct pico_cli_cmd quiz = {
+        .next = NULL, // It will be set to point to next command automaticaly
+        .command_name = "quiz",
+        .command_description = "short quiz\n",
+        .command_function = quiz_cli,
 };
+
 
 void app_cli_commands_add(struct pico_cli *cli)
 {
-    pico_cli_add_cmd(cli, &reboot);
-    pico_cli_add_cmd(cli, &tui);
+	pico_cli_add_cmd(cli, &reboot);
+	pico_cli_add_cmd(cli, &quiz);
+
 }
+
 ```
 
 ## Unit Tests
