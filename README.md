@@ -1,12 +1,13 @@
 # Pico CLI/Shell
 
-Pico CLI/Shell is a size-optimized, minimalistic command-line interface (CLI) and shell designed for embedded systems. **It uses less than 500 bytes of code and less than 100 bytes of RAM.**
+Pico CLI/Shell is a size-optimized, minimalistic command-line interface (CLI) designed for embedded systems. **It uses less than 500 bytes of code and less than 100 bytes of RAM.**
 
 ## Key Features 
 
 - Written in C (c99)
 - Small and efficient code base
 - Supports a help command
+- Supports multiple instances
 - Simple way to add user commands
 - Released under the BSD license
 
@@ -23,6 +24,7 @@ Compiled with GCC 13.2 using -Os optimization for Cortex-M4 target.
 Our primary goal with this implementation was to create a compact yet useful CLI/shell interface. Therefore, Pico CLI/Shell doesn't support some common features like autocompletion, argument parsing, history. Nonetheless, user commands can prompt for user input, offering an alternative to command arguments. See the 'Usage' section for more details on this feature.
 
 ## Usage
+![example of pico cli usage](./pico_cli_usage.gif)
 
 ### Compiling
 The whole implementation is in one file `pico_cli.c`. Other than that there are 
@@ -69,7 +71,6 @@ If compiled with PICO_CLI_USE_STATIC_MEMORY_ALLOCATION defined.
 ```c
 #include <stdint.h>
 #include "pico_cli.h"
-#include "pico_cli_internal.h"
 
 static struct pico_cli cli;
 
@@ -98,6 +99,7 @@ Define commands and add them to the CLI interface:
 ```c
 #include "pico_cli.h"
 
+// simple command to reboot our sysem
 static void reboot_cli(struct pico_cli *cli, char *s)
 {
     (void)cli;
@@ -113,6 +115,10 @@ static struct pico_cli_cmd reboot = {
     .command_function = reboot_cli,
 };
 
+
+// example of a command using pico_cli_get_user_input() function
+// to get user input when needed. This can be used instead of command
+// arguments...
 static void quiz_cli(struct pico_cli *cli, char *s)
 {
         (void) cli;
